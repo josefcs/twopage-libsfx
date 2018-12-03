@@ -54,6 +54,11 @@ GAME_LOOP:
         lda #$01 ; set 2nd screen status to loaded
         sta $19
 
+        VBL_off
+
+        lda     #%10000000  ; Force VBlank by turning off the screen.
+        sta     $2100
+
         LZ4_decompress Scr2Map, EXRAM, y
         VRAM_memcpy VRAM_MAP_LOC, EXRAM, y
 
@@ -62,6 +67,11 @@ GAME_LOOP:
 
         CGRAM_memcpy 0, Scr2Pal, sizeof_Scr2Pal
 
+        lda     #%00001111  ; End VBlank, setting brightness to 15 (100%).
+        sta     $2100
+
+        VBL_on
+        
         jmp GAME_LOOP
 
 ;-------------------------------------------------------------------------------
